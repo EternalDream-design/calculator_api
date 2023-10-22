@@ -2,14 +2,6 @@ pipeline {
     agent any
     
     stages{
-        stage('Clear old repo and Git clone new repo'){
-            steps{
-                script{
-                    sh 'rm -rf Api_calc_appsec'
-                    sh 'git clone https://github.com/EternalDream-design/calculator_api.git && cd calculator_api'
-                }
-            }
-        }
         stage('Clear'){
             steps{
                 script{
