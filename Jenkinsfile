@@ -2,6 +2,14 @@ pipeline {
     agent any
     
     stages{
+    	stage('Clonning new repositorie'){
+            steps{
+                script{
+                    sh 'rm -rf calculator_api'
+                    sh 'git clone https://github.com/EternalDream-design/calculator_api && cd calculator_api'
+                }
+            }
+        }
         stage('Clear past Docker'){
             steps{
                 script{
