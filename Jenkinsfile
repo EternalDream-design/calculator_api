@@ -45,6 +45,17 @@ pipeline {
                 // Scan again and fail on CRITICAL vulns
                 sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL calc_api_appsec:latest'
             }
+            stage('Scan with Semgrep') {
+            steps {
+                sh '''#!/bin/bash
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip3 install semgrep
+                semgrep api_calc.py
+                deactivate'''
+            }
+        }
+
            }
         }
 }
