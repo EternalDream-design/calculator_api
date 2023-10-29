@@ -27,5 +27,23 @@ pipeline {
                 }
             }
         }
-    }
+         stage('Scanning lib and containers trivy')
+            steps {
+                sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
+                sh 'mkdir -p reports'
+                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/api_calc-scan.html api_calc:latest'
+                publishHTML target : [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'api_calc-scan.html',
+                    reportName: 'Trivy Scan',
+                    reportTitles: 'Trivy Scan'
+                ]
+
+                // Scan again and fail on CRITICAL vulns
+                sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL api_calc:latest'
+            }
+        }
 }
