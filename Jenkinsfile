@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
                 sh 'mkdir -p reports'
-                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/api_calc-scan.html api_calc:latest'
+                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/api_calc-scan.html calc_api_appsec:latest'
                 publishHTML target : [
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
@@ -43,7 +43,7 @@ pipeline {
                 ]
 
                 // Scan again and fail on CRITICAL vulns
-                sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL api_calc:latest'
+                sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL calc_api_appsec:latest'
             }
            }
         }
