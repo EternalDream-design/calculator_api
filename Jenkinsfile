@@ -30,12 +30,13 @@ pipeline {
                 junit skipMarkingBuildUnstable: true, testResults: 'reports/calc_api_appsec-scan.xml'
             }
         }
-        stage('Build and run docker-container'){
+        stage('Build docker-container'){
             steps{
                 script{
                     sh 'docker build -f Dockerfile -t calc_api_appsec .'
                 }
             }
+          }
          stage('Scanning lib and containers trivy'){
             steps {
                 sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
@@ -55,7 +56,7 @@ pipeline {
                 sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL calc_api_appsec:latest'
               }
             }
-            stage('Build and run docker-container'){
+           stage('Run docker-container'){
             steps{
                 script{
                     sh 'docker run -d -p 5000:5000 calc_api_appsec:latest'
@@ -63,5 +64,4 @@ pipeline {
             		}
         	}
      }
- }
  }
