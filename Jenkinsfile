@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
                 sh 'mkdir -p reports'
-                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/api_calc-scan.html calc_api_appsec:latest'
+                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/calc_api_appsec-scan.html calc_api_appsec:latest'
                 publishHTML target : [
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
@@ -52,9 +52,9 @@ pipeline {
                 python3 -m venv .venv
                 source .venv/bin/activate
                 pip3 install semgrep
-                semgrep --config=auto --junit-xml -o reports/api_calc-scan.xml api_calc.py
+                semgrep --config=auto --junit-xml -o reports/api_calc-scan.xml calc_api_appsec.py
                 deactivate'''
-                junit skipMarkingBuildUnstable: true, testResults: 'reports/api_calc-scan.xml'
+                junit skipMarkingBuildUnstable: true, testResults: 'reports/calc_api_appsec-scan.xml'
             }
         }
 
