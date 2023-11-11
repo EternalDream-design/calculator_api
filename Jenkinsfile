@@ -19,19 +19,28 @@ pipeline {
                 }
             }
         }
+        stage('Scanning pythom code semgrep') {
+            steps {
+                sh '''#!/bin/bash
+                python3 -m venv .venv
+                source .venv/bin/activate
+                pip3 install semgrep
+                semgrep --config=auto --junit-xml -o reports/calc_api_appsec-scan.xml calc_api_appsec.py
+                deactivate'''
+                junit skipMarkingBuildUnstable: true, testResults: 'reports/calc_api_appsec-scan.xml'
+            }
+        }
         stage('Build and run docker-container'){
             steps{
                 script{
                     sh 'docker build -f Dockerfile -t calc_api_appsec .'
-                    sh 'docker run -d -p 5000:5000 calc_api_appsec:latest'
                 }
             }
-        }
          stage('Scanning lib and containers trivy'){
             steps {
                 sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
                 sh 'mkdir -p reports'
-                sh 'trivy image --ignore-unfixed --vuln-type os,library --format template --template "@html.tpl" -o reports/calc_api_appsec-scan.html calc_api_appsec:latest'
+                sh 'trivy image --ignore-unfixed --format template --template "@html.tpl" -o reports/calc_api_appsec-scan.html calc_api_appsec:latest'
                 publishHTML target : [
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
@@ -46,17 +55,12 @@ pipeline {
                 sh 'trivy image --ignore-unfixed --vuln-type os,library --exit-code 1 --severity CRITICAL calc_api_appsec:latest'
               }
             }
-            stage('Scan with Semgrep') {
-            steps {
-                sh '''#!/bin/bash
-                python3 -m venv .venv
-                source .venv/bin/activate
-                pip3 install semgrep
-                semgrep --config=auto --junit-xml -o reports/calc_api_appsec-scan.xml calc_api_appsec.py
-                deactivate'''
-                junit skipMarkingBuildUnstable: true, testResults: 'reports/calc_api_appsec-scan.xml'
-            }
-        }
-
+            stage('Build and run docker-container'){
+            steps{
+                script{
+                    sh 'docker run -d -p 5000:5000 calc_api_appsec:latest'
+                		}
+            		}
+        	}
      }
  }
