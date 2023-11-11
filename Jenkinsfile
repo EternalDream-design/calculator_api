@@ -52,8 +52,9 @@ pipeline {
                 python3 -m venv .venv
                 source .venv/bin/activate
                 pip3 install semgrep
-                semgrep api_calc.py
+                semgrep --config=auto --junit-xml -o reports/api_calc-scan.xml api_calc.py
                 deactivate'''
+                junit skipMarkingBuildUnstable: true, testResults: 'reports/api_calc-scan.xml'
             }
         }
 
