@@ -47,7 +47,7 @@ pipeline {
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: 'reports',
-                    reportFiles: 'api_calc-scan.html',
+                    reportFiles: 'calc_api_appsec-scan.html',
                     reportName: 'Trivy Scan',
                     reportTitles: 'Trivy Scan'
                 ]
